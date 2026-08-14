@@ -1,0 +1,58 @@
+﻿name: Android CI
+
+on:
+  push:
+    branches: [ main, feat/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build on Android Emulator
+    runs-on: ubuntu-22.04
+    env:
+      JAVA_HOME_11: /usr/lib/jvm/java-11-openjdk-amd64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Install Android SDK tools
+        uses: reactivecircus/android-emulator-runner@v2.38.0
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          emulator-options: -no-window -gpu host
+
+      - name: Wait for emulator
+        run: |
+          adb devices
+          adb -s emulator-5554 wait-for-device
+          adb shell pm list packages
+
+      - name: Build (Gradle)
+        run: ./gradlew -Pci build --no-daemon --stacktrace
+
+      # Uncomment the following to run instrumentation tests on the emulator
+      # - name: Run connected tests
+      #   run: ./gradlew connectedAndroidTest -Pci --no-daemon --stacktrace
+
+      - name: Dump emulator log
+        if: always()
+        run: adb logcat -d | sed -n '1,500p'
