@@ -46,20 +46,9 @@ jobs:
 
       - name: Dump emulator log
         if: always()
-        run: adb logcat -d | sed -n '1,500p'
         run: |
           adb devices
           adb -s emulator-5554 wait-for-device
           adb shell pm list packages
-
-      - name: Build (Gradle)
-        run: ./gradlew -Pci build --no-daemon --stacktrace
-
-      # Uncomment the following to run instrumentation tests on the emulator
-      # - name: Run connected tests
-      #   run: ./gradlew connectedAndroidTest -Pci --no-daemon --stacktrace
-
-      - name: Dump emulator log
-        if: always()
-        run: adb logcat -d | sed -n '1,500p'
+          adb logcat -d | sed -n '1,500p'
 
