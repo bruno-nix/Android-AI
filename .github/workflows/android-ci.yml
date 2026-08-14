@@ -32,15 +32,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Install Android SDK tools
-        uses: reactivecircus/android-emulator-runner@v2.38.0
-        with:
-          api-level: 31
-          target: google_apis
-          arch: x86_64
-          emulator-options: -no-window -gpu host
-
-      - name: Wait for emulator
+      - name: Install Android SDK tools\n        uses: reactivecircus/android-emulator-runner@v2.38.0\n        with:\n          api-level: 31\n          target: google_apis\n          arch: x86_64\n          emulator-options: -no-window -gpu host\n          script: ./gradlew -Pci build --no-daemon --stacktrace\n\n      - name: Wait for emulator
         run: |
           adb devices
           adb -s emulator-5554 wait-for-device
@@ -56,3 +48,4 @@ jobs:
       - name: Dump emulator log
         if: always()
         run: adb logcat -d | sed -n '1,500p'
+
