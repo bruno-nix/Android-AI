@@ -43,6 +43,17 @@ fun GlassCard(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
                     // ignore and keep acrylic fallback
                 }
             }
+            // Add subtle white border stroke at ~10% alpha to match Apple HIG glass edges
+            try {
+                val strokeColor = android.graphics.Color.argb((0.10 * 255).toInt(), 255, 255, 255)
+                val drawable = android.graphics.drawable.GradientDrawable().apply {
+                    cornerRadius = 22f * ctx.resources.displayMetrics.density
+                    setColor(android.graphics.Color.argb((0.6 * 255).toInt(), 28, 28, 30))
+                    setStroke((1 * ctx.resources.displayMetrics.density).toInt(), strokeColor)
+                }
+                background = drawable
+            } catch (_: Throwable) {
+            }
         }
     }, update = { view ->
         // Host a ComposeView child to render the passed content
