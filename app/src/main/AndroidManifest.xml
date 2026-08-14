@@ -1,0 +1,16 @@
+<manifest package="com.haloai.app"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <application android:label="Halo AI">
+        <!-- Voice interaction service placeholder (requires implementation) -->
+        <service android:name="com.haloai.voice.HaloVoiceInteractionService"
+                 android:permission="android.permission.BIND_VOICE_INTERACTION">
+            <intent-filter>
+                <action android:name="android.service.voice.VoiceInteractionService" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
